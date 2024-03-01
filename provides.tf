@@ -4,6 +4,14 @@ terraform {
       source = "hashicorp/aws"
     }
   }
+
+  cloud {
+    organization = "Eddie_Cheung"
+
+    workspaces {
+      name = "prismacloud"
+    }
+  }
 }
 
 provider "aws" {
