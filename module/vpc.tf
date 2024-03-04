@@ -8,6 +8,11 @@ resource "aws_internet_gateway" "my_igw" {
   vpc_id = aws_vpc.my_vpc.id
 }
 
+# Create EIP
+resource "aws_eip" "my_eip" {
+  domain = "vpc"
+}
+
 # Create NAT Gateway
 resource "aws_nat_gateway" "my_nat_gateway" {
   allocation_id = aws_eip.my_eip.id
