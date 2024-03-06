@@ -3,6 +3,13 @@ resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 }
 
+resource "aws_flow_log" "main" {
+  log_destination      = "arn:aws:s3:::eddie-every-rubbish-things-is-in-here"
+  log_destination_type = "s3"
+  traffic_type         = "ALL"
+  vpc_id               = aws_vpc.main.id
+}
+
 # Create Internet Gateway
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
@@ -56,18 +63,4 @@ resource "aws_route_table_association" "private_subnet_association" {
 
 resource "aws_default_security_group" "main" {
   vpc_id = aws_vpc.main.id
-
-  ingress {
-    protocol  = "1"
-    self      = true
-    from_port = 0
-    to_port   = 0
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 }
