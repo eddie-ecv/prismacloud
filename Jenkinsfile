@@ -1,5 +1,28 @@
 pipeline {
-  agent any
+  agent {
+    kubernetes {
+      yaml '''
+apiVersion: v1
+kind: Pod
+metadata:
+  name: checkov
+  namespace: jenkins
+spec:
+  containers:
+  - name: checkov
+    image: bridgecrew/checkov:latest
+    command: ["/bin/sh"]
+    tty: true
+    volumeMounts:
+    - name: docker-sock
+      mountPath: /var/run/docker.sock
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+      '''
+    }
+  }
 
   environment {
     PRISMA_API_URL = 'https://api.sg.prismacloud.io'
@@ -12,16 +35,11 @@ pipeline {
     //   }
     // }
     stage('Checkov') {
-      agent {
-        any {
-          image 'bridgecrew/checkov:latest'
-        }
-      }
       steps {
         withCredentials([string(credentialsId: 'PC_USER', variable: 'pc_user'),
         string(credentialsId: 'PC_PASSWORD', variable: 'pc_password')]) {
           script {
-            docker.image('bridgecrew/checkov:latest').inside("--entrypoint=''") {
+            container('checkov').inside("--entrypoint=''") {
               unstash 'source'
               try {
                 sh("""
