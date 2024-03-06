@@ -11,15 +11,14 @@ spec:
   containers:
   - name: checkov
     image: bridgecrew/checkov:latest
-    command: ["/bin/sh"]
     tty: true
-    volumeMounts:
-    - name: docker-sock
-      mountPath: /var/run/docker.sock
-  volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
+  resources:
+    limits:
+      memory: '2Gi'
+      cpu: '1000m'
+    requests:
+      memory: '500Mi'
+      cpu: '500m'
       '''
     }
   }
