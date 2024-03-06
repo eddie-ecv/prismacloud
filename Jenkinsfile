@@ -53,15 +53,6 @@ spec:
         }
       }
     }
-    stage('Finalize') {
-      steps {
-        script {
-          container('checkov') {
-            sh 'echo "Checkov scan completed successfully"'
-          }
-        }
-      }
-    }
   }
   post {
       success {
