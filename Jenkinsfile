@@ -7,7 +7,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git branch: 'main', url: 'git@github.com:eddie-ecv/prismacloud.git'
+        git branch: 'master', url: 'git@github.com:eddie-ecv/prismacloud.git'
         stash includes: '**/*', name: 'source'
       }
     }
