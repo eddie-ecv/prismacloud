@@ -12,6 +12,11 @@ pipeline {
       }
     }
     stage('Checkov') {
+      agent {
+        docker {
+          image 'bridgecrew/checkov:latest'
+        }
+      }
       steps {
         withCredentials([string(credentialsId: 'PC_USER', variable: 'pc_user'),
         string(credentialsId: 'PC_PASSWORD', variable: 'pc_password')]) {
