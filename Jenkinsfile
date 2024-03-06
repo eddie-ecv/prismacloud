@@ -28,18 +28,12 @@ spec:
     PRISMA_API_URL = 'https://api.sg.prismacloud.io'
   }
   stages {
-    // stage('Checkout') {
-    //   steps {
-    //     git branch: 'master', url: 'git@github.com:eddie-ecv/prismacloud.git'
-    //     stash includes: '**/*', name: 'source'
-    //   }
-    // }
     stage('Checkov') {
       steps {
         withCredentials([string(credentialsId: 'PC_USER', variable: 'pc_user'),
         string(credentialsId: 'PC_PASSWORD', variable: 'pc_password')]) {
           script {
-            container('checkov').inside("--entrypoint=''") {
+            container('checkov') {
               unstash 'source'
               try {
                 sh("""
