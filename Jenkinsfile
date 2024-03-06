@@ -5,12 +5,12 @@ pipeline {
     PRISMA_API_URL = 'https://api.sg.prismacloud.io'
   }
   stages {
-    stage('Checkout') {
-      steps {
-        git branch: 'master', url: 'git@github.com:eddie-ecv/prismacloud.git'
-        stash includes: '**/*', name: 'source'
-      }
-    }
+    // stage('Checkout') {
+    //   steps {
+    //     git branch: 'master', url: 'git@github.com:eddie-ecv/prismacloud.git'
+    //     stash includes: '**/*', name: 'source'
+    //   }
+    // }
     stage('Checkov') {
       agent {
         any {
