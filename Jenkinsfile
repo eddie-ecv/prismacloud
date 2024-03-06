@@ -26,28 +26,26 @@ spec:
 
   environment {
     PRISMA_API_URL = 'https://api.sg.prismacloud.io'
+    PRISMA_API_ACCESS_KEY = credentials('PC_USER')
+    PRISMA_API_SECRET_KEY = credentials('PC_PASSWORD')
   }
   stages {
     stage('Checkov') {
       steps {
-        withCredentials([string(credentialsId: 'PC_USER', variable: 'pc_user'),
-        string(credentialsId: 'PC_PASSWORD', variable: 'pc_password')]) {
-          script {
-            container('checkov') {
-              // unstash 'source'
-              try {
-                sh("""
-                checkov -d . --use-enforcement-rules -o cli -o junitxml \
-                --output-file-path console,results.xml \
-                --bc-api-key ${pc_user}::${pc_password} \
-                --repo-id git@github.com:eddie-ecv/prismacloud \
-                --branch master
-                """)
-                junit skipPublishingChecks: true, testResults: 'results.xml'
-              } catch (err) {
-                junit skipPublishingChecks: true, testResults: 'results.xml'
-                throw err
-              }
+        script {
+          container('checkov') {
+            try {
+              sh("""
+              checkov -d . --use-enforcement-rules -o cli -o junitxml \
+              --output-file-path console,results.xml \
+              --bc-api-key ${PRISMA_API_ACCESS_KEY}::${PRISMA_API_SECRET_KEY} \
+              --repo-id git@github.com:eddie-ecv/prismacloud \
+              --branch master
+              """)
+              junit skipPublishingChecks: true, testResults: 'results.xml'
+            } catch (err) {
+              junit skipPublishingChecks: true, testResults: 'results.xml'
+              throw err
             }
           }
         }
