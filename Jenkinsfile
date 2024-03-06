@@ -11,6 +11,7 @@ spec:
   containers:
   - name: checkov
     image: bridgecrew/checkov:latest
+    command: ["/bin/sh"]
     tty: true
   resources:
     limits:
