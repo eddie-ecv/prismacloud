@@ -54,6 +54,14 @@ spec:
       }
     }
   }
+  post {
+      success {
+        echo 'Checkov scan completed successfully'
+      }
+      failure {
+        echo 'Checkov scan failed'
+      }
+  }
   options {
     preserveStashes()
     timestamps()
