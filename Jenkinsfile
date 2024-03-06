@@ -13,7 +13,7 @@ pipeline {
     }
     stage('Checkov') {
       agent {
-        docker {
+        any {
           image 'bridgecrew/checkov:latest'
         }
       }
