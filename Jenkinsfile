@@ -42,10 +42,10 @@ spec:
               --repo-id git@github.com:eddie-ecv/prismacloud \
               --branch master || true
               """)
-              junit allowEmptyResults: true, skipPublishingChecks: true, testResults: 'results.xml'
+              junit skipPublishingChecks: true, testResults: 'results.xml'
               currentBuild.result = 'SUCCESS'
             } catch (err) {
-              junit allowEmptyResults: true, skipPublishingChecks: true, testResults: 'results.xml'
+              junit skipPublishingChecks: true, testResults: 'results.xml'
               currentBuild.result = 'FAILURE'
               throw err
             }
