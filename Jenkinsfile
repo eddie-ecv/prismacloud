@@ -34,7 +34,7 @@ spec:
         string(credentialsId: 'PC_PASSWORD', variable: 'pc_password')]) {
           script {
             container('checkov') {
-              unstash 'source'
+              // unstash 'source'
               try {
                 sh("""
                 checkov -d . --use-enforcement-rules -o cli -o junitxml
