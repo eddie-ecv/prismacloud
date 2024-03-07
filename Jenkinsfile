@@ -1,16 +1,12 @@
 pipeline {
-  agent {
-    kubernetes {
-      yamlFile 'agent.yaml'
-    }
-  }
+  agent any
 
   environment {
     PRISMA_API_URL = 'https://api.sg.prismacloud.io'
     PRISMA_API_ACCESS_KEY = credentials('PC_USER')
     PRISMA_API_SECRET_KEY = credentials('PC_PASSWORD')
   }
-  stages {
+  node(POD_LABEL) {
     stage('Checkov') {
       steps {
         script {
@@ -34,15 +30,15 @@ pipeline {
         }
       }
     }
-    stage('Terraform') {
-      steps {
-        container('terraform') {
-          sh 'terraform init'
-          sh 'terraform validate'
-          sh 'terraform plan'
-        }
-      }
-    }
+    // stage('Terraform') {
+    //   steps {
+    //     container('terraform') {
+    //       sh 'terraform init'
+    //       sh 'terraform validate'
+    //       sh 'terraform plan'
+    //     }
+    //   }
+    // }
   }
   post {
       success {
