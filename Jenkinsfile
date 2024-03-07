@@ -39,6 +39,7 @@ spec:
     PRISMA_API_URL = 'https://api.sg.prismacloud.io'
     PRISMA_API_ACCESS_KEY = credentials('PC_USER')
     PRISMA_API_SECRET_KEY = credentials('PC_PASSWORD')
+    TF_API_TOKEN = credentials('TF_API_TOKEN')
   }
   stages {
     stage('Checkov') {
