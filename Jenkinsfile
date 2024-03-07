@@ -1,8 +1,7 @@
 pipeline {
   agent {
     kubernetes {
-      yamlFile './jenkins/agent.yaml'
-      retries 2
+      yamlFile 'agent.yaml'
     }
   }
 
