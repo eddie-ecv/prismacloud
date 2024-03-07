@@ -34,7 +34,7 @@ pipeline {
           }
         }
       }
-    },
+    }
     stage('Terraform') {
       steps {
         container('terraform') {
@@ -43,8 +43,8 @@ pipeline {
           sh 'terraform plan'
         }
       }
-
     }
+  }
   post {
       success {
         echo 'Checkov scan completed successfully'
@@ -57,4 +57,4 @@ pipeline {
     preserveStashes()
     timestamps()
   }
-  }
+}
