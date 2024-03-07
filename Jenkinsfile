@@ -1,26 +1,8 @@
 pipeline {
   agent {
     kubernetes {
-      yaml '''
-apiVersion: v1
-kind: Pod
-metadata:
-  name: checkov
-  namespace: jenkins
-spec:
-  containers:
-  - name: checkov
-    image: bridgecrew/checkov:latest
-    command: ["/bin/sh"]
-    tty: true
-  resources:
-    limits:
-      memory: '2Gi'
-      cpu: '1000m'
-    requests:
-      memory: '500Mi'
-      cpu: '500m'
-      '''
+      yamlFile 'jenkins/agent.yaml'
+      retries 2
     }
   }
 
@@ -52,8 +34,17 @@ spec:
           }
         }
       }
+    },
+    stage('Terraform') {
+      steps {
+        container('terraform') {
+          sh 'terraform init'
+          sh 'terraform validate'
+          sh 'terraform plan'
+        }
+      }
+
     }
-  }
   post {
       success {
         echo 'Checkov scan completed successfully'
@@ -66,4 +57,4 @@ spec:
     preserveStashes()
     timestamps()
   }
-}
+  }

@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: checkov
+  namespace: jenkins
+spec:
+  containers:
+    - name: checkov
+      image: bridgecrew/checkov:latest
+      command: ['/bin/sh']
+      tty: true
+      resources:
+        limits:
+          memory: '2Gi'
+          cpu: '1000m'
+        requests:
+          memory: '500Mi'
+          cpu: '500m'
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: terraform
+  namespace: jenkins
+spec:
+  containers:
+    - name: terraform
+      image: hashicorp/terraform:latest
+      command: ['/bin/sh']
+      tty: true
+      resources:
+        limits:
+          memory: '2Gi'
+          cpu: '1000m'
+        requests:
+          memory: '500Mi'
+          cpu: '500m'
+      ports:
+        - containerPort: 8080
+          protocol: TCP
