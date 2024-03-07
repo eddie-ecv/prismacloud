@@ -5,25 +5,21 @@ environment {
 }
 node(label: 'checkov') {
   stage('Checkov') {
-    steps {
-      script {
-        container('checkov') {
-          try {
-            sh("""
-            checkov -d . --use-enforcement-rules -o cli -o junitxml \
-            --output-file-path console,results.xml \
-            --bc-api-key $PRISMA_API_ACCESS_KEY::$PRISMA_API_SECRET_KEY \
-            --repo-id git@github.com:eddie-ecv/prismacloud \
-            --branch master
-            """)
-            junit skipPublishingChecks: true, testResults: 'results.xml'
-            currentBuild.result = 'SUCCESS'
-          } catch (err) {
-            junit skipPublishingChecks: true, testResults: 'results.xml'
-            currentBuild.result = 'FAILURE'
-            throw err
-          }
-        }
+    container('checkov') {
+      try {
+        sh("""
+        checkov -d . --use-enforcement-rules -o cli -o junitxml \
+        --output-file-path console,results.xml \
+        --bc-api-key $PRISMA_API_ACCESS_KEY::$PRISMA_API_SECRET_KEY \
+        --repo-id git@github.com:eddie-ecv/prismacloud \
+        --branch master
+        """)
+        junit skipPublishingChecks: true, testResults: 'results.xml'
+        currentBuild.result = 'SUCCESS'
+      } catch (err) {
+        junit skipPublishingChecks: true, testResults: 'results.xml'
+        currentBuild.result = 'FAILURE'
+        throw err
       }
     }
   }
