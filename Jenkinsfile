@@ -3,7 +3,7 @@ environment {
     PRISMA_API_ACCESS_KEY = credentials('PC_USER')
     PRISMA_API_SECRET_KEY = credentials('PC_PASSWORD')
 }
-node(POD_LABEL) {
+node(label: 'checkov') {
   stage('Checkov') {
     steps {
       script {
