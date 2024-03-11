@@ -1,5 +1,3 @@
-def checkovVersion = '2.0.139'
-def terraformVersion = '1.0.4'
 def limits = [memory: '2Gi', cpu: '1000m']
 def requests = [memory: '500Mi', cpu: '500m']
 
@@ -18,7 +16,7 @@ pipeline {
           spec:
             containers:
             - name: checkov
-              image: bridgecrew/checkov:${checkovVersion}
+              image: bridgecrew/checkov:latest
               command:
               - '/bin/sh'
               tty: true
@@ -48,7 +46,6 @@ pipeline {
         always { junit 'results.xml' }
       }
     }
-
     stage('Terraform validate') {
       agent {
         kubernetes {
@@ -61,7 +58,7 @@ pipeline {
             spec:
               containers:
               - name: terraform
-                image: hashicorp/terraform:${terraformVersion}
+                image: hashicorp/terraform:latest
                 command:
                 - '/bin/sh'
                 tty: true
