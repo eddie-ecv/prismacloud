@@ -1,5 +1,5 @@
-def checkovVersion = 'latest'
-def terraformVersion = 'latest'
+def checkovVersion = '2.0.139'
+def terraformVersion = '1.0.4'
 def limits = [memory: '2Gi', cpu: '1000m']
 def requests = [memory: '500Mi', cpu: '500m']
 
@@ -7,10 +7,9 @@ pipeline {
   agent none
   stages {
     stage('Checkov scan') {
-      options { timeout(time: 30, unit: 'MINUTES') }
       agent {
         kubernetes {
-          cloud 'Kubernetes'
+          cloud 'kubernetes'
           yaml """
           apiVersion: v1
           kind: Pod
@@ -20,12 +19,13 @@ pipeline {
             containers:
             - name: checkov
               image: bridgecrew/checkov:${checkovVersion}
-              command: ['/bin/sh']
+              command:
+              - '/bin/sh'
               tty: true
               resources:
                 limits: ${limits}
                 requests: ${requests}
-            """
+          """
         }
       }
       environment {
@@ -35,45 +35,43 @@ pipeline {
       }
       steps {
         script {
-          try {
-            sh """
-            checkov -d . --use-enforcement-rules -o cli -o junitxml \
-            --output-file-path console,results.xml \
-            --bc-api-key $PRISMA_API_ACCESS_KEY::$PRISMA_API_SECRET_KEY \
-            --repo-id git@github.com:eddie-ecv/prismacloud \
-            --branch master
-            """
-            currentBuild.result = 'SUCCESS'
-          } catch (err) {
-            currentBuild.result = 'FAILURE'
-            error('Checkov scan failed')
-          }
+          checkovResult = sh(script: """
+          checkov -d . --use-enforcement-rules -o cli -o junitxml \
+        --output-file-path console,results.xml \
+        --bc-api-key $PRISMA_API_ACCESS_KEY::$PRISMA_API_SECRET_KEY \
+        --repo-id git@github.com:eddie-ecv/prismacloud \
+        --branch master
+        """, returnStatus: true)
         }
       }
       post {
         always { junit 'results.xml' }
+        success { checkovResult = true }
+        failure { checkovResult = false }
       }
     }
+
     stage('Terraform validate') {
-      options { timeout(time: 15, unit: 'MINUTES') }
+      when { expression { checkovResult == true } }
       agent {
         kubernetes {
-          cloud 'Kubernetes'
+          cloud 'kubernetes'
           yaml """
-          apiVersion: v1
-          kind: Pod
-          metadata:
-            namespace: jenkins
-          spec:
-            containers:
-            - name: terraform
-              image: hashicorp/terraform:${terraformVersion}
-              command: ['/bin/sh']
-              tty: true
-              resources:
-                limits: ${limits}
-                requests: ${requests}
-             """
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              namespace: jenkins
+            spec:
+              containers:
+              - name: terraform
+                image: hashicorp/terraform:${terraformVersion}
+                command:
+                - '/bin/sh'
+                tty: true
+                resources:
+                  limits: ${limits}
+                  requests: ${requests}
+          """
         }
       }
       environment {
