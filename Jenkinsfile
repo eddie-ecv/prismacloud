@@ -9,7 +9,7 @@ pipeline {
     stage('Checkov scan') {
       agent {
         kubernetes {
-          cloud 'kubernetes'
+          cloud 'Kubernetes'
           yaml """
           apiVersion: v1
           kind: Pod
@@ -61,7 +61,7 @@ pipeline {
     stage('Terraform validate') {
       agent {
         kubernetes {
-          cloud 'kubernetes'
+          cloud 'Kubernetes'
           yaml """
           apiVersion: v1
           kind: Pod
