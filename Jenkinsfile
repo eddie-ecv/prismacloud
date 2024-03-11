@@ -1,6 +1,6 @@
 podTemplate {
-  node('builder') {
-    stage('Checkov') {
+  node(POD_LABEL) {
+    stage('Scan code') {
       container('checkov') {
         sh("""
         checkov -d . --use-enforcement-rules -o cli -o junitxml \
