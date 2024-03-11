@@ -7,6 +7,7 @@ pipeline {
   agent none
   stages {
     stage('Checkov scan') {
+      options { timeout(time: 30, unit: 'MINUTES') }
       agent {
         kubernetes {
           cloud 'Kubernetes'
@@ -32,25 +33,20 @@ pipeline {
         PRISMA_API_ACCESS_KEY = credentials('PRISMA_API_ACCESS_KEY')
         PRISMA_API_SECRET_KEY = credentials('PRISMA_API_SECRET_KEY')
       }
-      stages {
-        stage('Run checkov') {
-          options { timeout(time: 30, unit: 'MINUTES') }
-          steps {
-            script {
-              try {
-                sh """
-                checkov -d . --use-enforcement-rules -o cli -o junitxml \
-                --output-file-path console,results.xml \
-                --bc-api-key $PRISMA_API_ACCESS_KEY::$PRISMA_API_SECRET_KEY \
-                --repo-id git@github.com:eddie-ecv/prismacloud \
-                --branch master
-                """
-                currentBuild.result = 'SUCCESS'
-              } catch (err) {
-                currentBuild.result = 'FAILURE'
-                error('Checkov scan failed')
-              }
-            }
+      steps {
+        script {
+          try {
+            sh """
+            checkov -d . --use-enforcement-rules -o cli -o junitxml \
+            --output-file-path console,results.xml \
+            --bc-api-key $PRISMA_API_ACCESS_KEY::$PRISMA_API_SECRET_KEY \
+            --repo-id git@github.com:eddie-ecv/prismacloud \
+            --branch master
+            """
+            currentBuild.result = 'SUCCESS'
+          } catch (err) {
+            currentBuild.result = 'FAILURE'
+            error('Checkov scan failed')
           }
         }
       }
@@ -59,6 +55,7 @@ pipeline {
       }
     }
     stage('Terraform validate') {
+      options { timeout(time: 15, unit: 'MINUTES') }
       agent {
         kubernetes {
           cloud 'Kubernetes'
@@ -83,14 +80,9 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
       }
-      stages {
-        stage('Run Terraform') {
-          options { timeout(time: 15, unit: 'MINUTES') }
-          steps {
-            sh 'terraform init'
-            sh 'terraform validate'
-          }
-        }
+      steps {
+        sh 'terraform init'
+        sh 'terraform validate'
       }
     }
   }
