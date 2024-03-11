@@ -9,7 +9,7 @@ pipeline {
     stage('Checkov scan') {
       agent {
         kubernetes {
-          cloud 'kubernetes'
+          cloud 'Kubernetes'
           yaml """
           apiVersion: v1
           kind: Pod
@@ -35,27 +35,24 @@ pipeline {
       }
       steps {
         script {
-          checkovResult = sh(script: """
+          sh(script: """
           checkov -d . --use-enforcement-rules -o cli -o junitxml \
         --output-file-path console,results.xml \
         --bc-api-key $PRISMA_API_ACCESS_KEY::$PRISMA_API_SECRET_KEY \
         --repo-id git@github.com:eddie-ecv/prismacloud \
         --branch master
-        """, returnStatus: true)
+        """)
         }
       }
       post {
         always { junit 'results.xml' }
-        success { checkovResult = true }
-        failure { checkovResult = false }
       }
     }
 
     stage('Terraform validate') {
-      when { expression { checkovResult == true } }
       agent {
         kubernetes {
-          cloud 'kubernetes'
+          cloud 'Kubernetes'
           yaml """
             apiVersion: v1
             kind: Pod
