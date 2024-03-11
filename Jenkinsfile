@@ -1,5 +1,5 @@
 podTemplate {
-  node(POD_LABEL) {
+  node('builder') {
     stage('Checkov') {
       container('checkov') {
         sh("""
