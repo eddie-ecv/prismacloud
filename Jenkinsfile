@@ -37,9 +37,10 @@ spec:
 
   environment {
     PRISMA_API_URL = 'https://api.sg.prismacloud.io'
-    PRISMA_API_ACCESS_KEY = credentials('PC_USER')
-    PRISMA_API_SECRET_KEY = credentials('PC_PASSWORD')
-    TF_API_TOKEN = credentials('TF_API_TOKEN')
+    PRISMA_API_ACCESS_KEY = credentials('PRISMA_API_ACCESS_KEY')
+    PRISMA_API_SECRET_KEY = credentials('PRISMA_API_SECRET_KEY')
+    AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
   }
   stages {
     stage('Checkov') {
