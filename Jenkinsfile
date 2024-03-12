@@ -18,10 +18,10 @@ pipeline {
               - '/bin/sh'
               tty: true
               resources:
-                limits: 
+                limits:
                   memory: '512Mi'
                   cpu: '500m'
-                requests: 
+                requests:
                   memory: '256Mi'
                   cpu: '250m'
           """
@@ -44,7 +44,7 @@ pipeline {
         }
       }
       post {
-        always { junit 'results.xml' }
+        always { junit skipPublishingChecks: true, testResults: 'results.xml' }
       }
     }
     stage('Terraform validate') {
