@@ -1,8 +1,10 @@
 pipeline {
   agent any
+  options {
+    parallelsAlwaysFailFast()
+  }
 
   stages {
-    failFast true
     parallel {
       stage('Checkov') {
         agent {
