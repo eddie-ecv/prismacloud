@@ -38,13 +38,13 @@ pipeline {
   }
   stages {
     stage('Checkov scan') {
-      steps {
-        container(name: 'checkov') {
-          environment {
+      environment {
             PRISMA_API_URL = 'https://api.sg.prismacloud.io'
             PRISMA_API_ACCESS_KEY = credentials('PRISMA_API_ACCESS_KEY')
             PRISMA_API_SECRET_KEY = credentials('PRISMA_API_SECRET_KEY')
-          }
+      }
+      steps {
+        container(name: 'checkov') {
           sh(script: """
           checkov -d . --use-enforcement-rules -o cli -o junitxml \
           --output-file-path console,results.xml \
@@ -59,6 +59,10 @@ pipeline {
       always { junit skipPublishingChecks: true, testResults: 'results.xml' }
     }
     stage('Terraform plan') {
+      environment {
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+      }
       steps {
         container(name: 'terraform') {
           sh 'terraform init'
