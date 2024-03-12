@@ -55,9 +55,6 @@ pipeline {
         }
       }
     }
-    post {
-      always { junit skipPublishingChecks: true, testResults: 'results.xml' }
-    }
     stage('Terraform plan') {
       environment {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
@@ -72,6 +69,7 @@ pipeline {
     }
   }
   post {
+    always { junit skipPublishingChecks: true, testResults: 'results.xml' }
     success {
       echo 'All stages completed successfully'
     }
