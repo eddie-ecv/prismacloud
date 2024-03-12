@@ -39,6 +39,39 @@ pipeline {
             }
           }
         }
+        stage('Terraform') {
+          agent {
+            kubernetes {
+              cloud 'Kubernetes'
+              yaml """
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              namespace: jenkins
+            spec:
+              containers:
+              - name: terraform
+                image: hashicorp/terraform:latest
+                command:
+                - '/bin/sh'
+                tty: true
+                resources:
+                  limits:
+                    memory: '512Mi'
+                    cpu: '500m'
+                  requests:
+                    memory: '256Mi'
+                    cpu: '250m'
+            """
+            }
+          }
+          steps {
+            container('terraform') {
+              sh 'terraform init'
+              sh 'terraform validate'
+            }
+          }
+        }
       }
     }
   }
