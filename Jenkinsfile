@@ -1,8 +1,5 @@
-def limits = [memory: '2Gi', cpu: '1000m']
-def requests = [memory: '500Mi', cpu: '500m']
-
 pipeline {
-  agent none
+  agent any
   stages {
     stage('Checkov scan') {
       agent {
@@ -21,8 +18,12 @@ pipeline {
               - '/bin/sh'
               tty: true
               resources:
-                limits: ${limits}
-                requests: ${requests}
+                limits: 
+                  memory: '512Mi'
+                  cpu: '500m'
+                requests: 
+                  memory: '256Mi'
+                  cpu: '250m'
           """
         }
       }
@@ -63,8 +64,12 @@ pipeline {
                 - '/bin/sh'
                 tty: true
                 resources:
-                  limits: ${limits}
-                  requests: ${requests}
+                  limits:
+                    memory: '512Mi'
+                    cpu: '500m'
+                  requests:
+                    memory: '256Mi'
+                    cpu: '250m'
           """
         }
       }
