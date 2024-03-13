@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Clone Git Repository') {
       steps {
-        git credentialsId: 'ecv-github' url: "${params.GIT_URL}"
+        git credentialsId: 'ecv-github', url: "${params.GIT_URL}"
         stash includes: '**', name: 'source-code'
       }
     }
