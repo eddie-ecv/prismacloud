@@ -2,17 +2,10 @@ pipeline {
   agent any
   options {
     parallelsAlwaysFailFast()
-    preserveStashes()
     timestamps()
   }
 
   stages {
-    stage('Clone Git Repository') {
-      steps {
-        git credentialsId: 'ecv-github', url: "${params.GIT_URL}"
-        stash includes: '**', name: 'source-code'
-      }
-    }
     stage('Parallel Stage') {
       parallel {
         stage('Checkov') {
@@ -48,7 +41,6 @@ pipeline {
           }
           steps {
             container('checkov') {
-              unstash 'source-code'
               sh """
               checkov -d . --use-enforcement-rules -o cli -o junitxml \
               --output-file-path console,results.xml \
